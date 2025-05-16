@@ -25,6 +25,75 @@
 	- the region waterNeed does not exceed the region waterLevel 
 */
 
+
+/* My code is here */
+
+void solveProblems(AcequiaManager& manager) {
+    std::vector<Canal*>& canals = manager.getCanals();
+    std::vector<Region*>& regions = manager.getRegions();
+    int maxTime = manager.getSimulationMax();
+
+    std::cout << "-Commencing Simulation-\n";
+
+    int hour = 0;
+    while (!manager.getIsSolved() && hour < maxTime) {
+        std::cout << "Hour " << hour << ": Checking region status\n";
+
+        for (Region* region : regions) {
+            std::cout << "Region: " << region->getName() << "\n"
+                      << "Water Level: " << region->getWaterLevel() << "\n"
+                      << "Water Need: " << region->getWaterNeed() << "\n"
+                      << "In Drought: " << region->isInDroughtStatus() << "\n"
+                      << "Flooded: " << region->isFloodedStatus() << "\n";
+        }
+
+        for (Canal* canal : canals) {
+            Region* source = canal->getSourceRegion();
+            Region* dest = canal->getDestinationRegion();
+
+            if (!canal->getIsOpen()) {
+                double surplus = source->getWaterLevel() - source->getWaterNeed();
+                double deficit = dest->getWaterNeed() - dest->getWaterLevel();
+
+                if (surplus > 10 && deficit > 10) {
+                    canal->setFlowRate(0.5);
+                    canal->toggleOpen(true);
+                    std::cout << "Opened canal: " << canal->getName() << "\n"
+                              << "From: " << source->getName() << "\n"
+                              << "To: " << dest->getName() << "\n"
+                              << "Flow rate: 0.5\n";
+                }
+            }
+        }
+
+        manager.nextHour();
+        hour++;
+    }
+
+    if (manager.getIsSolved()) {
+        std::cout << "Simulation completed successfully at hour " << hour - 1 << ".\n";
+    } else {
+        std::cout << "Simulation ended after reaching total time (" << maxTime << " hours).\n";
+    }
+
+    std::cout << "-Simulation complete-\n";
+}
+
+/* My Documentation of the solution*/       
+/*My solution starts with solveProblems function which starts the simulation and lets the user know.
+ *The simulation runs every hour to check if the region is flooded or in a drought then uses the canals
+ *to transfer water into its necessary regions at a flow rate of 0.5. Once the simulation has been completed
+ * or the time is up the simulation is finished. manager.nextHour function advances time to the next hour
+ * and gives the user an update on what is happening. 
+ * manager.getIsSolved function completes simulation when a region meets its conditions. 
+ *manager.getCanals, manager.getRegions, & manager.getSimulationMax obtains the information on all canals, regions, and 
+ * 			 			 			 			 			 			 * the amount of time the simulation should run for. */
+
+
+
+
+
+
 /*This will be how the solveProblems function is set up. The student may enter their on  */
 /*
 void solveProblems(AcequiaManager& manager)
